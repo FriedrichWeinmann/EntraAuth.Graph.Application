@@ -1,0 +1,149 @@
+﻿function Get-EAGServicePrincipal {
+	[CmdletBinding()]
+	param (
+		[Parameter(ParameterSetName = 'Filter')]
+		[string]
+		$DisplayName,
+
+		[Parameter(Mandatory = $true, ParameterSetName = 'Identity')]
+		[Alias('Id')]
+		[string]
+		$ObjectId,
+
+		[Parameter(ParameterSetName = 'Filter', ValueFromPipelineByPropertyName = $true)]
+		[Alias('AppId', 'ClientID')]
+		[string]
+		$ApplicationId,
+
+		[Parameter(ParameterSetName = 'Filter', ValueFromPipelineByPropertyName = $true)]
+		[string]
+		$Filter,
+
+		[string[]]
+		$Properties,
+
+		[switch]
+		$Raw,
+
+		[hashtable]
+		$ServiceMap = @{}
+	)
+
+	begin {
+		$services = $script:serviceSelector.GetServiceMap($ServiceMap)
+
+		Assert-EntraConnection -Service $services.Graph -Cmdlet $PSCmdlet
+
+		function ConvertFrom-ServicePrincipal {
+			[CmdletBinding()]
+			param (
+				[Parameter(ValueFromPipeline = $true)]
+				$InputObject,
+
+				[switch]
+				$Raw
+			)
+
+			process {
+				#region Feed the Cache
+				if ($InputObject.AppID) {
+					if (-not $script:cache.ServicePrincipalByAppID[$InputObject.AppID]) {
+						$script:cache.ServicePrincipalByAppID[$InputObject.AppID] = [PSCustomObject]@{
+							Type        = $InputObject.servicePrincipalType
+							Id          = $InputObject.id
+							AppID       = $InputObject.AppID
+							DisplayName = $InputObject.DisplayName
+						}
+					}
+					else {
+						# Depending on selected we might lose individual properties if we overwrite all
+						$current = $script:cache.ServicePrincipalByAppID[$InputObject.AppID]
+						if ($InputObject.servicePrincipalType) { $current.Type = $InputObject.servicePrincipalType }
+						if ($InputObject.id) { $current.Id = $InputObject.id }
+						if ($InputObject.AppID) { $current.AppID = $InputObject.AppID }
+						if ($InputObject.DisplayName) { $current.DisplayName = $InputObject.DisplayName }
+					}
+				}
+				if ($InputObject.ID) {
+					if (-not $script:cache.ServicePrincipalByID[$InputObject.ID]) {
+						$script:cache.ServicePrincipalByID[$InputObject.ID] = [PSCustomObject]@{
+							Type        = $InputObject.servicePrincipalType
+							Id          = $InputObject.id
+							AppID       = $InputObject.AppID
+							DisplayName = $InputObject.DisplayName
+						}
+					}
+					else {
+						# Depending on selected we might lose individual properties if we overwrite all
+						$current = $script:cache.ServicePrincipalByID[$InputObject.ID]
+						if ($InputObject.servicePrincipalType) { $current.Type = $InputObject.servicePrincipalType }
+						if ($InputObject.id) { $current.Id = $InputObject.id }
+						if ($InputObject.AppID) { $current.AppID = $InputObject.AppID }
+						if ($InputObject.DisplayName) { $current.DisplayName = $InputObject.DisplayName }
+					}
+				}
+				foreach ($scope in $InputObject.AppRoles) {
+					$script:cache.ScopesByID[$scope.id] = $scope
+				}
+				foreach ($scope in $InputObject.oauth2PermissionScopes) {
+					$script:cache.ScopesByID[$scope.id] = $scope
+				}
+				foreach ($scope in $InputObject.resourceSpecificApplicationPermissions) {
+					$script:cache.ScopesByID[$scope.id] = $scope
+				}
+				#endregion Feed the Cache
+
+				if ($Raw) { return $InputObject }
+
+				[PSCustomObject]@{
+					PSTypeName            = 'EntraAuth.Graph.ServicePrincipal'
+					Type                  = $InputObject.servicePrincipalType
+					Id                    = $InputObject.id
+					AppID                 = $InputObject.AppID
+					DisplayName           = $InputObject.DisplayName
+					AppDisplayName        = $InputObject.AppDisplayName
+					AppOwnerOrg           = $InputObject.AppOwnerOrganizationId
+					AssignmentRequired    = $InputObject.appRoleAssignmentRequired
+					ServicePrincipalNames = $InputObject.servicePrincipalNames
+
+					Scopes                = @{
+						Delegated   = @($InputObject.oauth2PermissionScopes)
+						Application = @($InputObject.appRoles)
+						AppResource = @($InputObject.resourceSpecificApplicationPermissions)
+					}
+
+					Object                = $InputObject
+				}
+			}
+		}
+	}
+	process {
+		$query = @{ }
+		if ($Properties) {
+			$query['$select'] = $Properties
+		}
+		if ($ObjectId) {
+			try { Invoke-EntraRequest -Service $services.Graph -Path "servicePrincipals/$ObjectId" -Query $query | ConvertFrom-ServicePrincipal -Raw:$Raw }
+			catch { $PSCmdlet.WriteError($_) }
+			return
+		}
+
+		$filterBuilder = [FilterBuilder]::new()
+
+		if ($DisplayName -and $DisplayName -ne '*') {
+			$filterBuilder.Add('displayName', 'eq', $DisplayName)
+		}
+		if ($ApplicationId) {
+			$filterBuilder.Add('appId', 'eq', $ApplicationId)
+		}
+		if ($Filter) {
+			$filterBuilder.CustomFilter = $Filter
+		}
+
+		if ($filterBuilder.Count() -gt 0) {
+			$query['$filter'] = $filterBuilder.Get()
+		}
+	
+		Invoke-EntraRequest -Service $services.Graph -Path 'servicePrincipals' -Query $query | ConvertFrom-ServicePrincipal -Raw:$Raw
+	}
+}
