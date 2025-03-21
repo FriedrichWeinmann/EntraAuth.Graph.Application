@@ -1,4 +1,50 @@
 ﻿function Get-EAGAppRegistration {
+	<#
+	.SYNOPSIS
+		Lists application registrations in the connected Entra ID tenant.
+	
+	.DESCRIPTION
+		Lists application registrations in the connected Entra ID tenant.
+		You can filter the results by display name, application ID, or custom filter.
+
+		Scopes Needed: Application.Read.All
+	
+	.PARAMETER DisplayName
+		Display name of the app registration to retrieve.
+	
+	.PARAMETER ObjectId
+		Object ID of the app registration to retrieve.
+	
+	.PARAMETER ApplicationId
+		Application ID (Client ID) of the app registration to retrieve.
+	
+	.PARAMETER Filter
+		Additional OData filter expression to apply when searching for app registrations.
+	
+	.PARAMETER Properties
+		Specific properties to retrieve from the app registration objects.
+	
+	.PARAMETER Raw
+		%RAW%
+	
+	.PARAMETER ServiceMap
+		%SERVICEMAP%
+	
+	.EXAMPLE
+		PS C:\> Get-EAGAppRegistration
+	
+		Retrieves all app registrations in the Entra ID tenant.
+
+	.EXAMPLE
+		PS C:\> Get-EAGAppRegistration -DisplayName "MyWebApp"
+	
+		Retrieves the app registration with the display name "MyWebApp".
+
+	.EXAMPLE
+		PS C:\> Get-EAGAppRegistration -DisplayName 'Dept-*' -Properties 'displayName', 'appId'
+	
+		Retrieves all app registrations that start with "Dept-" and returns only the display name and app ID properties.
+	#>
 	[CmdletBinding()]
 	param (
 		[Parameter(ParameterSetName = 'Filter')]

@@ -1,4 +1,49 @@
 ﻿function Get-EAGServicePrincipal {
+	<#
+	.SYNOPSIS
+		Lists service principals in the connected Entra ID tenant.
+	
+	.DESCRIPTION
+		Lists service principals in the connected Entra ID tenant.
+
+		Scope Needed: Application.Read.All
+	
+	.PARAMETER DisplayName
+		The display name of the service principal to filter by.
+	
+	.PARAMETER ObjectId
+		The Object ID of the service principal to filter by.
+	
+	.PARAMETER ApplicationId
+		The Application ID (Client ID) of the service principal to filter by.
+	
+	.PARAMETER Filter
+		Additional OData filter expression to apply when searching for service principals.
+	
+	.PARAMETER Properties
+		Specific properties to retrieve from the service principal objects.
+	
+	.PARAMETER Raw
+		%RAW%
+	
+	.PARAMETER ServiceMap
+		%SERVICEMAP%
+	
+	.EXAMPLE
+		PS C:\> Get-EAGServicePrincipal
+	
+		Retrieves all service principals in the Entra ID tenant.
+
+	.EXAMPLE
+		PS C:\> Get-EAGServicePrincipal -DisplayName "MyWebApp"
+	
+		Retrieves the service principal with the display name "MyWebApp".
+
+	.EXAMPLE
+		PS C:\> Get-EAGServicePrincipal -DisplayName 'Dept-*' -Properties 'displayName', 'appId'
+	
+		Retrieves all service principals that start with "Dept-" and returns only the display name and app ID properties.
+	#>
 	[CmdletBinding()]
 	param (
 		[Parameter(ParameterSetName = 'Filter')]

@@ -1,4 +1,43 @@
 ﻿function Add-EAGMsiScope {
+	<#
+	.SYNOPSIS
+		Adds API permissions (scopes) to a Managed Service Identity.
+
+	.DESCRIPTION
+		The Add-EAGMsiScope cmdlet adds application permissions (scopes) to a Managed Service Identity (MSI).
+		This allows the MSI to access specific APIs with the granted permissions.
+
+		Scopes Needed: Application.Read.All, AppRoleAssignment.ReadWrite.All
+
+	.PARAMETER DisplayName
+		The display name of the Managed Service Identity to add permissions to.
+
+	.PARAMETER ApplicationId
+		The Application ID (Client ID) of the Managed Service Identity to add permissions to.
+
+	.PARAMETER ObjectId
+		The Object ID of the Managed Service Identity to add permissions to.
+
+	.PARAMETER Scope
+		The permission scopes to add to the Managed Service Identity.
+		These are the API permissions that will be granted.
+
+	.PARAMETER Resource
+		%RESOURCE%
+
+	.PARAMETER ServiceMap
+		%SERVCICEMAP%
+
+	.EXAMPLE
+		PS C:\> Add-EAGMsiScope -DisplayName "MyWebApp" -Resource "Microsoft Graph" -Scope "User.Read.All"
+
+		Adds the User.Read.All application permission for Microsoft Graph to the MSI named "MyWebApp".
+
+	.EXAMPLE
+		PS C:\> Add-EAGMsiScope -ApplicationId "11111111-1111-1111-1111-111111111111" -Resource "00000003-0000-0000-c000-000000000000" -Scope "User.Read.All", "Group.Read.All"
+
+		Adds the User.Read.All and Group.Read.All application permissions for Microsoft Graph (identified by its app ID) to the MSI with the specified application ID.
+	#>
 	[CmdletBinding(DefaultParameterSetName = 'Filter', SupportsShouldProcess = $true)]
 	param (
 		[Parameter(ParameterSetName = 'Filter', ValueFromPipelineByPropertyName = $true)]

@@ -1,4 +1,46 @@
 ﻿function Add-EAGAppScope {
+	<#
+	.SYNOPSIS
+		Adds API permissions (scopes) to an app registration.
+	
+	.DESCRIPTION
+		Adds API permissions (scopes) to an app registration.
+		This allows the app to access specific APIs with the granted permissions, once consent has been granted,.
+	
+		Scopes Needed: Application.Read.All, AppRoleAssignment.ReadWrite.All
+	
+	.PARAMETER DisplayName
+		Display name of the app registration to add scopes to.
+	
+	.PARAMETER ApplicationId
+		Application ID (Client ID) of the app registration to add scopes to.
+	
+	.PARAMETER ObjectId
+		Object ID of the app registration to add scopes to.
+	
+	.PARAMETER Scope
+		Permission scopes to add to the app registration.
+	
+	.PARAMETER Type
+		Type of the permission scopes to add.
+		Valid Options:
+		- Delegated: Permissions that apply to interactive sessions, where the application acts on behalf of the signed-in user.
+		- Application: Permissions that apply to unattended sessions, where the application acts as itself.
+	
+	.PARAMETER Resource
+		%RESOURCE%
+	
+	.PARAMETER Consent
+		Indicates whether to automatically grant consent for the added scopes.
+	
+	.PARAMETER ServiceMap
+		%SERVICEMAP%
+	
+	.EXAMPLE
+		PS C:\> Add-EAGAppScope -DisplayName "MyWebApp" -Resource "Microsoft Graph" -Scope "User.Read.All" -Type Application
+	
+		Adds the User.Read.All application permission for Microsoft Graph to the app registration named "MyWebApp".
+	#>
 	[CmdletBinding(SupportsShouldProcess = $true, DefaultParameterSetName = 'Filter')]
 	param (
 		[Parameter(ParameterSetName = 'Filter', ValueFromPipelineByPropertyName = $true)]

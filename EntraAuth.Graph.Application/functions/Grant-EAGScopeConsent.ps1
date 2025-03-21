@@ -1,4 +1,63 @@
 ﻿function Grant-EAGScopeConsent {
+	<#
+	.SYNOPSIS
+		Grants consent for a scope on an App Registration.
+	
+	.DESCRIPTION
+		Grants consent for a scope on an App Registration.
+		Consent is required for scopes configured on an app registration to take effect in the tenant.
+
+		The App Registration is a manifest, the declaration of the application in use.
+		The Enterprise Application / Service Principal is the actual object that represents the application in the tenant.
+		Granting "Admin Consent" to scopes on an App Registration will copy those onto the Enterprise Application / Service Principal, hence making them take effect.
+
+		Note:
+		Managed Identities are also Service Principals, but they do not have an App Registration.
+		There is no consent of "Consent", as there is no manifest's proposal to consent to.
+		This does not mean that Managed Identities cannot have scopes, but they require a different approach.
+		Use "Add-EAGMsiScope" to add scopes to Managed Identities.
+
+		Scopes Needed: Application.Read.All, AppRoleAssignment.ReadWrite.All
+	
+	.PARAMETER DisplayName
+		Display name of the app registration whose scopes to grant consent to.
+	
+	.PARAMETER ApplicationId
+		Application ID (Client ID) of the app registration whose scopes to grant consent to.
+	
+	.PARAMETER ObjectId
+		Object ID of the app registration whose scopes to grant consent to.
+	
+	.PARAMETER Scope
+		The permission scopes to grant consent to.
+	
+	.PARAMETER Type
+		Type of the permission scopes to grant consent to.
+		Valid Options:
+		- Delegated: Permissions that apply to interactive sessions, where the application acts on behalf of the signed-in user.
+		- Application: Permissions that apply to unattended sessions, where the application acts as itself.
+	
+	.PARAMETER Resource
+		%RESOURCE%
+	
+	.PARAMETER ServiceMap
+		%SERVICEMAP%
+	
+	.EXAMPLE
+		PS C:\> Grant-EAGScopeConsent -DisplayName "MyWebApp" -Resource "Microsoft Graph" -Scope "User.Read.All" -Type Application
+
+		Grants consent for the User.Read.All application permission for Microsoft Graph to the app registration named "MyWebApp".
+
+	.EXAMPLE
+		PS C:\> Grant-EAGScopeConsent -ApplicationId "11111111-1111-1111-1111-111111111111" -Resource "00000003-0000-0000-c000-000000000000" -Scope "User.Read.All", "Group.Read.All" -Type Delegated
+
+		Grants consent for the User.Read.All and Group.Read.All delegated permissions for Microsoft Graph (identified by its app ID) to the app registration with the specified application ID.
+
+	.EXAMPLE
+		PS C:\> Get-EAGAppRegistration -DisplayName MyTaskApp | Grant-EAGScopeConsent -Resource "https://graph.microsoft.com" -Scope "User.ReadBasic.All" -Type Delegated
+
+		Grants consent for the User.ReadBasic.All delegated permission for Microsoft Graph to the app registration named "MyTaskApp".
+	#>
 	[CmdletBinding(DefaultParameterSetName = 'Filter', SupportsShouldProcess = $true)]
 	param (
 		[Parameter(ParameterSetName = 'Filter', ValueFromPipelineByPropertyName = $true)]

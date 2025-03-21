@@ -1,4 +1,44 @@
 ﻿function Get-EAGScope {
+	<#
+	.SYNOPSIS
+		Lists scopes applied to app registrations, service principals, and managed identities.
+	
+	.DESCRIPTION
+		Lists scopes applied to app registrations, service principals, and managed identities.
+	
+	.PARAMETER Type
+		Filter scopes by type.
+		Valid Options:
+		- All: All scopes (default)
+		- Delegated: Delegated scopes
+		- Application: Application scopes
+	
+	.PARAMETER DisplayName
+		The displayname of the app registration or service principal to filter by.
+	
+	.PARAMETER ApplicationId
+		The Application ID (Client ID) of the app registration or service principal to filter by.
+	
+	.PARAMETER ObjectId
+		The Object ID of the app registration or service principal to filter by.
+	
+	.PARAMETER ClearCache
+		Indicates whether to clear the cache of resolved scopes and principals.
+		This should only be needed when developing an application and modifying/updating scope definitions.
+	
+	.PARAMETER ServiceMap
+		%SERVICEMAP%
+	
+	.EXAMPLE
+		PS C:\> Get-EAGScope -DisplayName "MyWebApp"
+	
+		Retrieves all scopes applied to the app registration or service principal with the display name "MyWebApp".
+
+	.EXAMPLE
+		PS C:\> Get-EAGScope -ApplicationId "11111111-1111-1111-1111-111111111111"
+	
+		Retrieves all scopes applied to the app registration or service principal with the specified application ID.
+	#>
 	[CmdletBinding(DefaultParameterSetName = 'Filter')]
 	param (
 		[ValidateSet('All', 'Delegated', 'Application')]

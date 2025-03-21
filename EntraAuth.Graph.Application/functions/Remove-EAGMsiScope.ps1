@@ -1,4 +1,43 @@
 ﻿function Remove-EAGMsiScope {
+	<#
+	.SYNOPSIS
+		Removes API permissions (scopes) from a Managed Service Identity.
+
+	.DESCRIPTION
+		The Remove-EAGMsiScope cmdlet removes application permissions (scopes) from a Managed Service Identity (MSI).
+		This is useful when you need to revoke access to specific APIs or reduce the permissions of an MSI.
+
+		Scopes Needed: Application.Read.All, AppRoleAssignment.ReadWrite.All
+
+	.PARAMETER DisplayName
+		The display name of the Managed Service Identity to remove permissions from.
+
+	.PARAMETER ApplicationId
+		The Application ID (Client ID) of the Managed Service Identity to remove permissions from.
+
+	.PARAMETER ObjectId
+		The Object ID of the Managed Service Identity to remove permissions from.
+
+	.PARAMETER Scope
+		The permission scopes to remove from the Managed Service Identity.
+		These are the API permissions that will be revoked.
+
+	.PARAMETER Resource
+		%RESOURCE%
+
+	.PARAMETER ServiceMap
+		%SERVCICEMAP%
+
+	.EXAMPLE
+		PS C:\> Remove-EAGMsiScope -DisplayName "MyWebApp" -Resource "Microsoft Graph" -Scope "User.Read.All"
+
+		Removes the User.Read.All application permission for Microsoft Graph from the MSI named "MyWebApp".
+
+	.EXAMPLE
+		PS C:\> Remove-EAGMsiScope -ApplicationId "11111111-1111-1111-1111-111111111111" -Resource "00000003-0000-0000-c000-000000000000" -Scope "User.Read.All", "Group.Read.All"
+
+		Removes the User.Read.All and Group.Read.All application permissions for Microsoft Graph (identified by its app ID) from the MSI with the specified application ID.
+	#>
 	[CmdletBinding(DefaultParameterSetName = 'Filter', SupportsShouldProcess = $true)]
 	param (
 		[Parameter(ParameterSetName = 'Filter', ValueFromPipelineByPropertyName = $true)]

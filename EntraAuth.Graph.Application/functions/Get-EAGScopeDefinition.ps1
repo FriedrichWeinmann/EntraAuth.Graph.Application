@@ -1,4 +1,62 @@
 ﻿function Get-EAGScopeDefinition {
+	<#
+	.SYNOPSIS
+		Retrieves scope definitions from service principals / Enterprise applications.
+	
+	.DESCRIPTION
+		Retrieves scope definitions from service principals / Enterprise applications.
+		This does NOT return assigned or granted scopes on the apps.
+		It provides the scopes provided BY the service in question.
+	
+	.PARAMETER Name
+		The name of the scope to filter by.
+	
+	.PARAMETER Type
+		The type of scopes to retrieve.
+		Valid Options:
+		- All: All scopes (default)
+		- Delegated: Delegated scopes
+		- Application: Application scopes
+		- AppResource: Resource-specific Application  scopes
+	
+	.PARAMETER DisplayName
+		Filter by display name of the service principal.
+	
+	.PARAMETER ApplicationId
+		Filter by application ID of the service principal.
+	
+	.PARAMETER ObjectId
+		Filter by object ID of the service principal.
+	
+	.PARAMETER Resource
+		Filter by the resource Identifier of the service.
+	
+	.PARAMETER Force
+		Include disabled scopes.
+	
+	.PARAMETER ServiceMap
+		%SERVICEMAP%
+	
+	.EXAMPLE
+		PS C:\> Get-EAGScopeDefinition -Name "User.Read"
+	
+		Retrieves all scopes with the name "User.Read".
+
+	.EXAMPLE
+		PS C:\> Get-EAGScopeDefinition -DisplayName 'Microsoft Graph'
+	
+		Retrieves all scopes provided by the service principal with the display name 'Microsoft Graph'.
+
+	.EXAMPLE
+		PS C:\> Get-EAGScopeDefinition -DisplayName 'Microsoft Graph' -Name User.*
+
+		Retrieves all scopes with the name starting with 'User.' provided by the service principal with the display name 'Microsoft Graph'.
+
+	.EXAMPLE
+		PS C:\> Get-EAGScopeDefinition -Resource https://graph.microsoft.com -Name Group.*
+
+		Retrieves all scopes with the name starting with 'Group.' provided by the service principal with the service principal name 'https://graph.microsoft.com'.
+	#>
 	[CmdletBinding(DefaultParameterSetName = 'Filter')]
 	param (
 		[string]
