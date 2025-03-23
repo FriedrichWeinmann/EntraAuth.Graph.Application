@@ -1,4 +1,57 @@
 ﻿function Revoke-EAGScopeConsent {
+	<#
+	.SYNOPSIS
+		Revokes previously granted consent for scopes on an App Registration.
+	
+	.DESCRIPTION
+		Revokes previously granted consent for scopes on an App Registration.
+		Consent is required for scopes configured on an app registration to take effect in the tenant.
+	
+		Scopes Needed: Application.Read.All, AppRoleAssignment.ReadWrite.All
+	
+	.PARAMETER DisplayName
+		Displayname of the app registration whose scopes to revoke consent for.
+	
+	.PARAMETER ApplicationId
+		Application ID (Client ID) of the app registration whose scopes to revoke consent for.
+	
+	.PARAMETER ObjectId
+		Object ID of the app registration whose scopes to revoke consent for.
+	
+	.PARAMETER Scope
+		The permission scopes to revoke consent for.
+	
+	.PARAMETER Type
+		Type of the permission scopes to revoke consent for.
+		Valid Options:
+		- Delegated: Permissions that apply to interactive sessions, where the application acts on behalf of the signed-in user.
+		- Application: Permissions that apply to unattended sessions, where the application acts as itself.
+	
+	.PARAMETER Resource
+		The resource (API) to which the permissions/scopes apply.
+        This can be specified as a display name, application ID, object ID or Service Principal Name.
+        Examples:
+        + 'Microsoft Graph'
+        + '00000003-0000-0000-c000-000000000000'
+        + 'https://graph.microsoft.com'
+	
+	.PARAMETER ServiceMap
+		Optional hashtable to map service names to specific EntraAuth service instances.
+        Used for advanced scenarios where you want to use something other than the default Graph connection.
+        Example: @{ Graph = 'GraphBeta' }
+        This will switch all Graph API calls to use the beta Graph API.
+
+	.PARAMETER WhatIf
+		If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
+	
+	.PARAMETER Confirm
+		If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
+	
+	.EXAMPLE
+		PS C:\> Revoke-EAGScopeConsent -DisplayName "MyWebApp" -Resource "Microsoft Graph" -Scope "User.Read.All" -Type Application
+	
+		Revokes consent for the User.Read.All application permission for Microsoft Graph from the app registration named "MyWebApp".
+	#>
 	[CmdletBinding(DefaultParameterSetName = 'Filter', SupportsShouldProcess = $true)]
 	param (
 		[Parameter(ParameterSetName = 'Filter', ValueFromPipelineByPropertyName = $true)]

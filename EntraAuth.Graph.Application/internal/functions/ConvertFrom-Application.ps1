@@ -1,4 +1,22 @@
 ﻿function ConvertFrom-Application {
+	<#
+	.SYNOPSIS
+		Converts raw App Registration objects from the Graph API to a more user-friendly format.
+	
+	.DESCRIPTION
+		Converts raw App Registration objects from the Graph API to a more user-friendly format.
+	
+	.PARAMETER InputObject
+		The raw App Registration object to convert.
+	
+	.PARAMETER Raw
+		Actually, don't convert the object after all.
+	
+	.EXAMPLE
+		PS C:\> Invoke-EntraRequest -Path "applications/$ObjectId" | ConvertFrom-Application
+
+		Converts the raw App Registration object to a more user-friendly format.
+	#>
 	[CmdletBinding()]
 	param (
 		[Parameter(ValueFromPipeline = $true)]

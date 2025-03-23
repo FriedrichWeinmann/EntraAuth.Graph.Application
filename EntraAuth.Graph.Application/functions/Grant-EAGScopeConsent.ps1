@@ -38,10 +38,24 @@
 		- Application: Permissions that apply to unattended sessions, where the application acts as itself.
 	
 	.PARAMETER Resource
-		%RESOURCE%
+		The resource (API) to which the permissions/scopes apply.
+        This can be specified as a display name, application ID, object ID or Service Principal Name.
+        Examples:
+        + 'Microsoft Graph'
+        + '00000003-0000-0000-c000-000000000000'
+        + 'https://graph.microsoft.com'
 	
 	.PARAMETER ServiceMap
-		%SERVICEMAP%
+		Optional hashtable to map service names to specific EntraAuth service instances.
+        Used for advanced scenarios where you want to use something other than the default Graph connection.
+        Example: @{ Graph = 'GraphBeta' }
+        This will switch all Graph API calls to use the beta Graph API.
+
+	.PARAMETER WhatIf
+		If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
+	
+	.PARAMETER Confirm
+		If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
 	
 	.EXAMPLE
 		PS C:\> Grant-EAGScopeConsent -DisplayName "MyWebApp" -Resource "Microsoft Graph" -Scope "User.Read.All" -Type Application

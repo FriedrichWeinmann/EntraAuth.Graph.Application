@@ -5,6 +5,8 @@
 	
 	.DESCRIPTION
 		Lists scopes applied to app registrations, service principals, and managed identities.
+
+		Scopes Needed: Application.Read.All, User.ReadBasic.All (Delegated), User.Read.All (Application)
 	
 	.PARAMETER Type
 		Filter scopes by type.
@@ -27,7 +29,10 @@
 		This should only be needed when developing an application and modifying/updating scope definitions.
 	
 	.PARAMETER ServiceMap
-		%SERVICEMAP%
+		Optional hashtable to map service names to specific EntraAuth service instances.
+        Used for advanced scenarios where you want to use something other than the default Graph connection.
+        Example: @{ Graph = 'GraphBeta' }
+        This will switch all Graph API calls to use the beta Graph API.
 	
 	.EXAMPLE
 		PS C:\> Get-EAGScope -DisplayName "MyWebApp"

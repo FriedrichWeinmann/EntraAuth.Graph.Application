@@ -24,10 +24,14 @@
 		Specific properties to retrieve from the service principal objects.
 	
 	.PARAMETER Raw
-		%RAW%
+		When specified, returns the raw API response objects instead of the formatted PowerShell objects.
+        Useful for accessing detailed properties not exposed at the top level, but less user-friendly.
 	
 	.PARAMETER ServiceMap
-		%SERVICEMAP%
+		Optional hashtable to map service names to specific EntraAuth service instances.
+        Used for advanced scenarios where you want to use something other than the default Graph connection.
+        Example: @{ Graph = 'GraphBeta' }
+        This will switch all Graph API calls to use the beta Graph API.
 	
 	.EXAMPLE
 		PS C:\> Get-EAGServicePrincipal

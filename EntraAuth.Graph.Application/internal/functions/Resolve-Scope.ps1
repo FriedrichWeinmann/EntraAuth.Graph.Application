@@ -1,4 +1,41 @@
 ﻿function Resolve-Scope {
+	<#
+	.SYNOPSIS
+		Resolves scopes, from either name or ID, into a standardized object.
+	
+	.DESCRIPTION
+		Resolves scopes, from either name or ID, into a standardized object.
+		These scopes are cached for performance reasons.
+
+		Scope Needed: Application.Read.All
+	
+	.PARAMETER Scope
+		Name or ID of the scope to resolve.
+	
+	.PARAMETER Resource
+		The resource (API) to which the permissions/scopes apply.
+        This can be specified as a display name, application ID, object ID or Service Principal Name.
+        Examples:
+        + 'Microsoft Graph'
+        + '00000003-0000-0000-c000-000000000000'
+        + 'https://graph.microsoft.com'
+	
+	.PARAMETER Type
+		Type of the scope to resolve.
+		Valid Options:
+		- Delegated: Permissions that apply to interactive sessions, where the application acts on behalf of the signed-in user.
+		- Application: Permissions that apply to unattended sessions, where the application acts as itself.
+	
+	.PARAMETER Services
+		A hashtable mapping which EntraAuth service should be called for Graph requests.
+		Example: @{ Graph = 'GraphBeta' }
+		Generally, this parameter should receive a passed through -ServiceMap parameter from a public command.
+	
+	.EXAMPLE
+		PS C:\> Resolve-Scope -Scope "User.Read.All" -Resource "Microsoft Graph" -Type Application
+		
+		Resolves the User.Read.All application permission for Microsoft Graph.
+	#>
 	[CmdletBinding()]
 	param (
 		[string]
@@ -12,7 +49,7 @@
 		$Type,
 
 		[hashtable]
-		$Services
+		$Services = @{}
 	)
 	process {
 		$identity = "$Scope|$Resource|$Type"

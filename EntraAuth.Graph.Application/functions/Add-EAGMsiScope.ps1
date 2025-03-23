@@ -23,10 +23,21 @@
 		These are the API permissions that will be granted.
 
 	.PARAMETER Resource
-		%RESOURCE%
+		The resource (API) to which the permissions/scopes apply.
+        This can be specified as a display name, application ID, object ID or Service Principal Name.
+        Examples:
+        + 'Microsoft Graph'
+        + '00000003-0000-0000-c000-000000000000'
+        + 'https://graph.microsoft.com'
 
 	.PARAMETER ServiceMap
 		%SERVCICEMAP%
+
+	.PARAMETER WhatIf
+		If this switch is enabled, no actions are performed but informational messages will be displayed that explain what would happen if the command were to run.
+	
+	.PARAMETER Confirm
+		If this switch is enabled, you will be prompted for confirmation before executing any operations that change state.
 
 	.EXAMPLE
 		PS C:\> Add-EAGMsiScope -DisplayName "MyWebApp" -Resource "Microsoft Graph" -Scope "User.Read.All"

@@ -1,4 +1,61 @@
 ﻿function Resolve-ServicePrincipal {
+	<#
+	.SYNOPSIS
+		Resolves Service Principals, based on an identifiable property.
+	
+	.DESCRIPTION
+		Resolves Service Principals, based on an identifiable property.
+		These Service Principals are cached for performance reasons.
+
+		Valid identifiers:
+		- DisplayName
+		- Client ID (App ID)
+		- Object ID
+		- Service Principal Name
+
+		This command always returns an obbject with the following properties:
+		- Success: A boolean indicating if the resolution was successful.
+		- Result: The resolved App Registration object(s).
+		- Message: A message indicating the result of the resolution.
+		The caller is responsible for handling error cases.
+
+		Scopes Needed: Application.Read.All
+	
+	.PARAMETER Identity
+		The identifier of the Service Principal to resolve.
+		Valid identifiers:
+		- DisplayName
+		- Client ID (App ID)
+		- Object ID
+		- Service Principal Name
+	
+	.PARAMETER Properties
+		Specific properties to retrieve from the Service Principal objects.
+		Will always include 'id', 'appid', 'displayName', and 'servicePrincipalNames', no matter what is specified.
+	
+	.PARAMETER Cache
+		A hashtable used as cache for resolved Service Principals.
+		The content of that hashtable will be updated by the results of this command.
+		Provide it repeatedly to new calls to this command to avoid repeated resolutions.
+	
+	.PARAMETER Unique
+		Whether ambiguous results should be considered an error.
+	
+	.PARAMETER Services
+		A hashtable mapping which EntraAuth service should be called for Graph requests.
+		Example: @{ Graph = 'GraphBeta' }
+		Generally, this parameter should receive a passed through -ServiceMap parameter from a public command.
+	
+	.EXAMPLE
+		PS C:\> Resolve-ServicePrincipal -Identity "Microsoft Graph" -Cache $spns
+	
+		Resolves the Service Principal with the display name "Microsoft Graph".
+
+	.EXAMPLE
+		PS C:\> Resolve-ServicePrincipal -Identity "https://graph.microsoft.com" -Cache $spns
+	
+		Resolves the Service Principal with the specified Service Principal Name.
+	#>
 	[CmdletBinding()]
 	param (
 		[string]
@@ -14,7 +71,7 @@
 		$Unique,
 
 		[hashtable]
-		$Services
+		$Services = @{}
 	)
 	process {
 		if ($Properties -notcontains 'id') { $Properties = @($Properties) + 'id' }
