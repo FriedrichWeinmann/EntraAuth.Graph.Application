@@ -4,7 +4,7 @@
 RootModule = 'EntraAuth.Graph.Application.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0'
+ModuleVersion = '1.0.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -67,6 +67,7 @@ FunctionsToExport = @(
 	'Add-EAGAppScope'
 	'Add-EAGMsiScope'
 	'Get-EAGAppRegistration'
+	'Get-EAGEnterpriseApplication'
 	'Get-EAGManagedIdentity'
 	'Get-EAGScope'
 	'Get-EAGScopeDefinition'
@@ -104,13 +105,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('entra', 'application', 'serviceprincipal', 'scopes')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/FriedrichWeinmann/EntraAuth.Graph.Application/blob/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/FriedrichWeinmann/EntraAuth.Graph.Application'
 
         # A URL to an icon representing this module.
         # IconUri = ''
