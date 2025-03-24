@@ -102,7 +102,7 @@
 		$Resource,
 
 		[hashtable]
-		$ServiceMap
+		$ServiceMap = @{ }
 	)
 	begin {
 		$services = $script:serviceSelector.GetServiceMap($ServiceMap)
