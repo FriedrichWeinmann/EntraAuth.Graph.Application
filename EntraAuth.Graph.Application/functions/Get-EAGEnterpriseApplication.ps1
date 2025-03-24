@@ -1,29 +1,28 @@
-﻿function Get-EAGManagedIdentity {
+﻿function Get-EAGEnterpriseApplication {
 	<#
 	.SYNOPSIS
-		Retrieves Managed Service Identities from Entra ID.
+		Retrieves Enterprise Applications from Entra ID.
 
 	.DESCRIPTION
-		Retrieves Managed Service Identities from Entra ID.
+		Retrieves Enterprise Applications from Entra ID.
 
 		Scopes Needed: Application.Read.All
 
 	.PARAMETER DisplayName
-		The display name of the Managed Service Identity to retrieve.
+		The display name of the Enterprise Application to retrieve.
 
 	.PARAMETER ObjectId
-		The Object ID of the Managed Service Identity to retrieve.
-		When specified, returns a single MSI with the exact matching ID.
+		The Object ID of the Enterprise Application to retrieve.
 
 	.PARAMETER ApplicationId
-		The Application ID (Client ID) of the Managed Service Identity to retrieve.
+		The Application ID (Client ID) of the Enterprise Application to retrieve.
 		Also known as AppId or ClientID.
 
 	.PARAMETER Filter
-		Additional OData filter expression to apply when searching for MSIs.
+		Additional OData filter expression to apply when searching for Enterprise Applications.
 
 	.PARAMETER Properties
-		Specific properties to retrieve from the MSI objects.
+		Specific properties to retrieve from the Enterprise Application objects.
 
 	.PARAMETER Raw
 		When specified, returns the raw API response objects instead of the formatted PowerShell objects.
@@ -36,19 +35,19 @@
         This will switch all Graph API calls to use the beta Graph API.
 
 	.EXAMPLE
-		PS C:\> Get-EAGManagedIdentity
+		PS C:\> Get-EAGEnterpriseApplication
 
-		Retrieves all Managed Service Identities in the Entra ID tenant.
-
-	.EXAMPLE
-		PS C:\> Get-EAGManagedIdentity -DisplayName "MyWebApp"
-
-		Retrieves the Managed Service Identity with the display name "MyWebApp".
+		Retrieves all Enterprise Applications in the Entra ID tenant.
 
 	.EXAMPLE
-		PS C:\> Get-EAGManagedIdentity -ApplicationId "11111111-1111-1111-1111-111111111111"
+		PS C:\> Get-EAGEnterpriseApplication -DisplayName "MyWebApp"
 
-		Retrieves the Managed Service Identity with the specified application ID.
+		Retrieves the Enterprise Applications  with the display name "MyWebApp".
+
+	.EXAMPLE
+		PS C:\> Get-EAGEnterpriseApplication -ApplicationId "11111111-1111-1111-1111-111111111111"
+
+		Retrieves the Enterprise Applications  with the specified application ID.
 	#>
 	[CmdletBinding(DefaultParameterSetName = 'Filter')]
 	param (
@@ -94,7 +93,7 @@
 			return
 		}
 
-		$param = @{ Filter = "servicePrincipalType eq 'ManagedIdentity'" }
+		$param = @{ Filter = "servicePrincipalType eq 'Application'" }
 		if ($DisplayName) { $param.DisplayName = $DisplayName }
 		if ($ApplicationId) { $param.ApplicationId = $ApplicationId }
 		if ($Filter) { $param.Filter = $param.Filter, $Filter -join ' and ' }
