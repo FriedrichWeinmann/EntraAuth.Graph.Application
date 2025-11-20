@@ -21,6 +21,10 @@
 	.PARAMETER Filter
 		Additional OData filter expression to apply when searching for Enterprise Applications.
 
+	.PARAMETER ApplicationType
+		What kind of application to search for.
+		Matches the filter conditions from the Azure Portal.
+
 	.PARAMETER Properties
 		Specific properties to retrieve from the Enterprise Application objects.
 
@@ -69,6 +73,10 @@
 		[string]
 		$Filter,
 
+		[ValidateSet('EnterpriseApplications', 'MicrosoftApplications', 'ManagedIdentities', 'AllApplications', 'AIAgentApplications')]
+		[string]
+		$ApplicationType = 'Applications',
+
 		[string[]]
 		$Properties,
 
@@ -81,7 +89,17 @@
 	begin {
 		$services = $script:serviceSelector.GetServiceMap($ServiceMap)
 
-		Assert-EntraConnection -Service $services.Graph -Cmdlet $PSCmdlet
+		Assert-EntraConnection -Service $services.GraphBeta -Cmdlet $PSCmdlet
+
+		$notAnAiAgentFilter = "NOT isOf('microsoft.graph.agentIdentity') and NOT isOf('microsoft.graph.agentIdentityBlueprintPrincipal') and NOT (tags/Any(p: startswith(p, 'power-virtual-agents-')) or tags/Any(p: p eq 'AgenticInstance') or tags/Any(p: p eq 'AgenticApp'))"
+		$filters = @{
+			Applications = "servicePrincipalType eq 'Application'"
+			EnterpriseApplications = "$notAnAiAgentFilter and tags/Any(x: x eq 'WindowsAzureActiveDirectoryIntegratedApp')"
+			MicrosoftApplications = "$notAnAiAgentFilter and appOwnerOrganizationId eq f8cdef31-a31e-4b4a-93e4-5f571e91255a"
+			ManagedIdentities = "$notAnAiAgentFilter and servicePrincipalType eq 'ManagedIdentity'"
+			AllApplications = $notAnAiAgentFilter
+			AIAgentApplications = "isOf('microsoft.graph.agentIdentity') or isOf('microsoft.graph.agentIdentityBlueprintPrincipal') or tags/Any(p: startswith(p, 'power-virtual-agents-')) or tags/Any(p: p eq 'AgenticInstance') or tags/Any(p: p eq 'AgenticApp')"
+		}
 	}
 	process {
 		$common = @{ ServiceMap = $services }
@@ -93,7 +111,7 @@
 			return
 		}
 
-		$param = @{ Filter = "servicePrincipalType eq 'Application'" }
+		$param = @{ Filter = $filters[$ApplicationType] }
 		if ($DisplayName) { $param.DisplayName = $DisplayName }
 		if ($ApplicationId) { $param.ApplicationId = $ApplicationId }
 		if ($Filter) { $param.Filter = $param.Filter, $Filter -join ' and ' }

@@ -81,7 +81,7 @@
 	begin {
 		$services = $script:serviceSelector.GetServiceMap($ServiceMap)
 
-		Assert-EntraConnection -Service $services.Graph -Cmdlet $PSCmdlet
+		Assert-EntraConnection -Service $services.GraphBeta -Cmdlet $PSCmdlet
 
 		function ConvertFrom-ServicePrincipal {
 			[CmdletBinding()]
@@ -172,7 +172,7 @@
 			$query['$select'] = $Properties
 		}
 		if ($ObjectId) {
-			try { Invoke-EntraRequest -Service $services.Graph -Path "servicePrincipals/$ObjectId" -Query $query | ConvertFrom-ServicePrincipal -Raw:$Raw }
+			try { Invoke-EntraRequest -Service $services.GraphBeta -Path "servicePrincipals/$ObjectId" -Query $query | ConvertFrom-ServicePrincipal -Raw:$Raw }
 			catch { $PSCmdlet.WriteError($_) }
 			return
 		}
@@ -192,7 +192,12 @@
 		if ($filterBuilder.Count() -gt 0) {
 			$query['$filter'] = $filterBuilder.Get()
 		}
+
+		$headers = @{}
+		if ($query['$filter'] -and $query['$filter'] -match '^NOT |[ \(]+NOT ') {
+			$headers['ConsistencyLevel'] = 'eventual'
+		}
 	
-		Invoke-EntraRequest -Service $services.Graph -Path 'servicePrincipals' -Query $query | ConvertFrom-ServicePrincipal -Raw:$Raw
+		Invoke-EntraRequest -Service $services.GraphBeta -Path 'servicePrincipals' -Query $query -Header $headers | ConvertFrom-ServicePrincipal -Raw:$Raw
 	}
 }
