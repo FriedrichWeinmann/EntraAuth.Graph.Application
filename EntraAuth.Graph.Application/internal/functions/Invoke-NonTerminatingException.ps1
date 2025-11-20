@@ -1,10 +1,10 @@
-﻿function Invoke-TerminatingException {
+﻿function Invoke-NonTerminatingException {
 	<#
 	.SYNOPSIS
-		Throw a terminating exception in the context of the caller.
+		Throw a non-terminating exception in the context of the caller.
 	
 	.DESCRIPTION
-		Throw a terminating exception in the context of the caller.
+		Throw a non-terminating exception in the context of the caller.
 		Masks the actual code location from the end user in how the message will be displayed.
 	
 	.PARAMETER Cmdlet
@@ -27,7 +27,7 @@
 		The target the error applies to.
 	
 	.EXAMPLE
-		PS C:\> Invoke-TerminatingException -Cmdlet $PSCmdlet -Message 'Unknown calling module'
+		PS C:\> Invoke-NonTerminatingException -Cmdlet $PSCmdlet -Message 'Unknown calling module'
 	
 		Terminates the calling command, citing an unknown caller.
 #>
@@ -75,6 +75,6 @@
 		}
 		else { $newException = $exceptionType::new($Message) }
 		$record = [System.Management.Automation.ErrorRecord]::new($newException, (Get-PSCallStack)[1].FunctionName, $Category, $Target)
-		$Cmdlet.ThrowTerminatingError($record)
+		$Cmdlet.WriteError($record)
 	}
 }

@@ -4,7 +4,7 @@
 RootModule = 'EntraAuth.Graph.Application.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.1'
+ModuleVersion = '1.1.9'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -44,7 +44,8 @@ Description = 'EntraAuth based module to manage App Registrations and Enterprise
 
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(
-	@{ ModuleName = 'EntraAuth'; ModuleVersion = '1.6.33' }
+	@{ ModuleName = 'EntraAuth'; ModuleVersion = '1.8.50' }
+	@{ ModuleName = 'EntraAuth.Graph'; ModuleVersion = '1.0.4' }
 )
 
 # Assemblies that must be loaded prior to importing this module
@@ -64,8 +65,12 @@ FormatsToProcess = @('EntraAuth.Graph.Application.Formats.ps1xml')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @(
+	'Add-EAGAppClientCertificate'
+	'Add-EAGAppClientSecret'
+	'Add-EAGAppFederatedCredential'
 	'Add-EAGAppScope'
 	'Add-EAGMsiScope'
+	'Get-EAGAppAuthentication'
 	'Get-EAGAppRegistration'
 	'Get-EAGEnterpriseApplication'
 	'Get-EAGManagedIdentity'
@@ -74,6 +79,7 @@ FunctionsToExport = @(
 	'Get-EAGServicePrincipal'
 	'Grant-EAGScopeConsent'
 	'New-EAGAppRegistration'
+	'Remove-EAGAppAuthentication'
 	'Remove-EAGAppRegistration'
 	'Remove-EAGAppScope'
 	'Remove-EAGMsiScope'

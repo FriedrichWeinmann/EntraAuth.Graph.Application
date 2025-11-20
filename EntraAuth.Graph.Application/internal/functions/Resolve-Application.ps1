@@ -97,12 +97,12 @@
 		}
 
 		if (-not $result.Result) {
-			$result.Message = "No application found! (Name: $DisplayName | AppID: $ApplicationId | ID: $ObjectId)"
+			$result.Message = "No App Registration found! (Name: $DisplayName | AppID: $ApplicationId | ID: $ObjectId)"
 			return $result
 		}
 		if ($result.Result.Count -gt 1 -and $Unique) {
 			$names = @($result.Result).ForEach{ '+ {0} (Created: {1:yyyy-MM-dd} | ID: {2} | AppID: {3})' -f $_.DisplayName, $_.Object.createdDateTime, $_.Id, $_.AppID }
-			$result.Message = "Ambiguous Application: More than one App Registration was found to add Scopes to:`n$($names -join "`n")`nPlease provide a unique identifier and try again."
+			$result.Message = "Ambiguous App Registration: More than one App Registration was found:`n$($names -join "`n")`nPlease provide a unique identifier and try again."
 			return $result
 		}
 		$result.Success = $true

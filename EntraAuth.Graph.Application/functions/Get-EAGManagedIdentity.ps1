@@ -82,7 +82,7 @@
 	begin {
 		$services = $script:serviceSelector.GetServiceMap($ServiceMap)
 
-		Assert-EntraConnection -Service $services.Graph -Cmdlet $PSCmdlet
+		Assert-EntraConnection -Service $services.GraphBeta -Cmdlet $PSCmdlet
 	}
 	process {
 		$common = @{ ServiceMap = $services }
