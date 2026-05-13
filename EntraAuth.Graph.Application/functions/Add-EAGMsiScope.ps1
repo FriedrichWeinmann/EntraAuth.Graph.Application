@@ -145,7 +145,7 @@
 			}
 			Write-Verbose "Adding scope $($resolvedScope.id) ($($resolvedScope.Value))) to Managed Identity $($appSPN.appid) ($($appSPN.displayName))"
 			try {
-				$null = Invoke-EntraRequest -Method POST -Path "servicePrincipals/$($appSPN.id)/appRoleAssignments" -Body $grant -Header @{
+				$null = Invoke-EntraRequest -Service $services.Graph -Method POST -Path "servicePrincipals/$($appSPN.id)/appRoleAssignments" -Body $grant -Header @{
 					'content-type' = 'application/json'
 				}
 			}

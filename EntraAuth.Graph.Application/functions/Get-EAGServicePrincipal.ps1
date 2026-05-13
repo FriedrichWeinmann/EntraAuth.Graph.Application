@@ -177,7 +177,7 @@
 			return
 		}
 
-		$filterBuilder = [FilterBuilder]::new()
+		$filterBuilder = New-EntraFilterBuilder
 
 		if ($DisplayName -and $DisplayName -ne '*') {
 			$filterBuilder.Add('displayName', 'eq', $DisplayName)
@@ -186,7 +186,7 @@
 			$filterBuilder.Add('appId', 'eq', $ApplicationId)
 		}
 		if ($Filter) {
-			$filterBuilder.CustomFilter = $Filter
+			$filterBuilder.Add($Filter)
 		}
 
 		if ($filterBuilder.Count() -gt 0) {
@@ -196,6 +196,9 @@
 		$headers = @{}
 		if ($query['$filter'] -and $query['$filter'] -match '^NOT |[ \(]+NOT ') {
 			$headers['ConsistencyLevel'] = 'eventual'
+		}
+		if ($query['$filter']) {
+			Write-Verbose "Service Principal Filter Condition: $($query['$filter'])"
 		}
 	
 		Invoke-EntraRequest -Service $services.GraphBeta -Path 'servicePrincipals' -Query $query -Header $headers | ConvertFrom-ServicePrincipal -Raw:$Raw

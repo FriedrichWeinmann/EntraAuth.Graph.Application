@@ -74,7 +74,7 @@
 		$Filter,
 
 		[ValidateSet('EnterpriseApplications', 'MicrosoftApplications', 'ManagedIdentities', 'AllApplications', 'AIAgentApplications')]
-		[string]
+		[string[]]
 		$ApplicationType = 'Applications',
 
 		[string[]]
@@ -91,14 +91,14 @@
 
 		Assert-EntraConnection -Service $services.GraphBeta -Cmdlet $PSCmdlet
 
-		$notAnAiAgentFilter = "NOT isOf('microsoft.graph.agentIdentity') and NOT isOf('microsoft.graph.agentIdentityBlueprintPrincipal') and NOT (tags/Any(p: startswith(p, 'power-virtual-agents-')) or tags/Any(p: p eq 'AgenticInstance') or tags/Any(p: p eq 'AgenticApp'))"
+		$notAnAiAgentFilter = "(NOT isOf('microsoft.graph.agentIdentity') and NOT isOf('microsoft.graph.agentIdentityBlueprintPrincipal') and NOT (tags/Any(p: startswith(p, 'power-virtual-agents-')) or tags/Any(p: p eq 'AgenticInstance') or tags/Any(p: p eq 'AgenticApp')))"
 		$filters = @{
-			Applications = "servicePrincipalType eq 'Application'"
-			EnterpriseApplications = "$notAnAiAgentFilter and tags/Any(x: x eq 'WindowsAzureActiveDirectoryIntegratedApp')"
-			MicrosoftApplications = "$notAnAiAgentFilter and appOwnerOrganizationId eq f8cdef31-a31e-4b4a-93e4-5f571e91255a"
-			ManagedIdentities = "$notAnAiAgentFilter and servicePrincipalType eq 'ManagedIdentity'"
+			Applications = "(servicePrincipalType eq 'Application')"
+			EnterpriseApplications = "(tags/Any(x: x eq 'WindowsAzureActiveDirectoryIntegratedApp'))"
+			MicrosoftApplications = "(appOwnerOrganizationId eq f8cdef31-a31e-4b4a-93e4-5f571e91255a)"
+			ManagedIdentities = "(servicePrincipalType eq 'ManagedIdentity')"
 			AllApplications = $notAnAiAgentFilter
-			AIAgentApplications = "isOf('microsoft.graph.agentIdentity') or isOf('microsoft.graph.agentIdentityBlueprintPrincipal') or tags/Any(p: startswith(p, 'power-virtual-agents-')) or tags/Any(p: p eq 'AgenticInstance') or tags/Any(p: p eq 'AgenticApp')"
+			AIAgentApplications = "(isOf('microsoft.graph.agentIdentity') or isOf('microsoft.graph.agentIdentityBlueprintPrincipal') or tags/Any(p: startswith(p, 'power-virtual-agents-')) or tags/Any(p: p eq 'AgenticInstance') or tags/Any(p: p eq 'AgenticApp'))"
 		}
 	}
 	process {
@@ -111,10 +111,19 @@
 			return
 		}
 
-		$param = @{ Filter = $filters[$ApplicationType] }
+		$filterBuilder = New-EntraFilterBuilder
+		$presetsFB = New-EntraFilterBuilder -Logic OR
+		if ($ApplicationType -notcontains 'AIAgentApplications') { $filterBuilder.Add($notAnAiAgentFilter) }
+		foreach ($appType in $ApplicationType) {
+			if ($appType -eq 'AllApplications') { continue } # AllApplications is basically everything, so no further filter constraint is added
+			$presetsFB.Add($filters[$appType])
+		}
+		if ($presetsFB.Count() -gt 0) { $filterBuilder.Add($presetsFB) }
+		if ($Filter) { $filterBuilder.Add($Filter) }
+
+		$param = @{ Filter = $filterBuilder.Get() }
 		if ($DisplayName) { $param.DisplayName = $DisplayName }
 		if ($ApplicationId) { $param.ApplicationId = $ApplicationId }
-		if ($Filter) { $param.Filter = $param.Filter, $Filter -join ' and ' }
 
 		Get-EAGServicePrincipal @common @param
 	}
