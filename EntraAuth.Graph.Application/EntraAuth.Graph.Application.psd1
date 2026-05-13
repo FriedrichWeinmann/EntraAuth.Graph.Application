@@ -4,7 +4,7 @@
 RootModule = 'EntraAuth.Graph.Application.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.9'
+ModuleVersion = '1.1.11'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -44,8 +44,8 @@ Description = 'EntraAuth based module to manage App Registrations and Enterprise
 
 # Modules that must be imported into the global environment prior to importing this module
 RequiredModules = @(
-	@{ ModuleName = 'EntraAuth'; ModuleVersion = '1.8.50' }
-	@{ ModuleName = 'EntraAuth.Graph'; ModuleVersion = '1.0.4' }
+	@{ ModuleName = 'EntraAuth'; ModuleVersion = '1.8.52' }
+	@{ ModuleName = 'EntraAuth.Graph'; ModuleVersion = '1.0.5' }
 )
 
 # Assemblies that must be loaded prior to importing this module

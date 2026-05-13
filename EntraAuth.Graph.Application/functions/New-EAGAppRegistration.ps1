@@ -27,6 +27,12 @@
 		- Web: This will enable the authentication, where the user is asked to open a specific URL and paste in a code provided, THEN authenticate. (DeviceCode flow)
 		Generally, MobileDesktop is the preferred option, as it is more user-friendly and secure.
 		Defaults to: MobileDesktop
+
+	.PARAMETER Type
+		What kind of App Registration do we define?
+		Supported options:
+		- SingleTenant: This App Registration is for use in the current tenant only.
+		- MultiTenant: This App Registration is for use in more than one tenant.
 	
 	.PARAMETER NoEnterpriseApp
 		Do not create the associated Enterprise Application (service principal).
@@ -69,6 +75,10 @@
 		[string]
 		$Platform = 'MobileDesktop',
 
+		[ValidateSet('SingleTenant', 'MultiTenant')]
+		[string]
+		$Type = 'SingleTenant',
+
 		[switch]
 		$NoEnterpriseApp,
 
@@ -103,6 +113,7 @@
 			}
 		}
 		if ($Description) { $Body.description = $Description }
+		if ($Type -eq 'MultiTenant') { $body.signInAudience = 'AzureADMultipleOrgs' }
 
 		Write-Verbose "Final Request Body:`n$($body | ConvertTo-Json)"
 

@@ -2,6 +2,7 @@
 $script:_services = @{
 	Graph = 'Graph'
 	GraphBeta = 'GraphBeta'
+	KeyVault = 'AzureKeyVault'
 }
 $script:serviceSelector = [ServiceSelector]::new()
 

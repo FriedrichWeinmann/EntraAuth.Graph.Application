@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## 1.1.11 (2026-05-12)
+
++ Upd: Get-EAGEnterpriseApplication - can now filter for multiple ApplicationTypes in one request.
++ Fix: Add-EAGMsiScope - ignores `-ServiceMap` parameter for actual scope assignment
+
 ## 1.1.9 (2025-11-20)
 
 + New: Get-EAGAppAuthentication - List App Registration authentication settings / options.
